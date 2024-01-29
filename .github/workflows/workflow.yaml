@@ -24,7 +24,7 @@ env:
   lawResourceGroup: "RG-PC-ACR-DEV"
  # $lawSubscription: $subscription
   DeployStorage : "yes"
-  dbdeployType    : "mysql"
+
 
 
     
@@ -96,7 +96,7 @@ jobs: #it defines the action that needs to perfored after trigger
         subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         deploymentName: 'deployment-${{ github.run_number }}'
         template: ./deploy/main.bicep
-        parameters: './deploy/param.json environment=${{ env.environment }}  Location=${{ env.Location }}  subscription=${{ secrets.AZURE_SUBSCRIPTION_ID }} appInstanceName=${{ env.appInstanceName }} orgPrefix=${{ env.orgPrefix }} Linuxversion=${{ env.Linuxversion }}  DeployStorage=${{ env.DeployStorage }} dbdeployType=${{ env.dbdeployType }} tenantId=${{ secrets.AZURE_TENANT_ID }} lawResourceGroup=${{ env.lawResourceGroup }} userID=${{ secrets.USER_ID }}' 
+        parameters: './deploy/param.json environment=${{ env.environment }}  Location=${{ env.Location }}  subscription=${{ secrets.AZURE_SUBSCRIPTION_ID }} appInstanceName=${{ env.appInstanceName }} orgPrefix=${{ env.orgPrefix }} Linuxversion=${{ env.Linuxversion }}  DeployStorage=${{ env.DeployStorage }} dbdeployType=${{ env.dbdeployType }} tenantId=${{ secrets.AZURE_TENANT_ID }} lawResourceGroup=${{ env.lawResourceGroup }} userID=${{ secrets.USER_ID }} existingSubnetAddressPrefix=${{env.EXISTINGSUBNETADDRESSPREFIX}}'  
         failOnStdErr: false 
         additionalArguments: --what-if
         region: 'westus'
@@ -125,7 +125,7 @@ jobs: #it defines the action that needs to perfored after trigger
         subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         deploymentName: 'deployment-${{ github.run_number }}'
         template: ./deploy/main.bicep
-        parameters: './deploy/param.json environment=${{ env.environment }}  Location=${{ env.Location }}  subscription=${{ secrets.AZURE_SUBSCRIPTION_ID }} appInstanceName=${{ env.appInstanceName }} orgPrefix=${{ env.orgPrefix }} Linuxversion=${{ env.Linuxversion }}  DeployStorage=${{ env.DeployStorage }} dbdeployType=${{ env.dbdeployType }} tenantId=${{ secrets.AZURE_TENANT_ID }} lawResourceGroup=${{ env.lawResourceGroup }} userID=${{ secrets.USER_ID }}' 
+        parameters: './deploy/param.json environment=${{ env.environment }}  Location=${{ env.Location }}  subscription=${{ secrets.AZURE_SUBSCRIPTION_ID }} appInstanceName=${{ env.appInstanceName }} orgPrefix=${{ env.orgPrefix }} Linuxversion=${{ env.Linuxversion }}  DeployStorage=${{ env.DeployStorage }} dbdeployType=${{ env.dbdeployType }} tenantId=${{ secrets.AZURE_TENANT_ID }} lawResourceGroup=${{ env.lawResourceGroup }} userID=${{ secrets.USER_ID }} existingSubnetAddressPrefix=${{env.EXISTINGSUBNETADDRESSPREFIX}}' 
         failOnStdErr: false 
         region: 'westus'
 
