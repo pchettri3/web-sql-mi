@@ -17,7 +17,7 @@ env:
   environment: "dev"
   REGION: "westus"
   #$subscription: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-  appInstanceName: "webappt3pc"
+  appInstanceName: "kpgappwusmi"
   orgPrefix: "pct"
   tenant:  ${{ secrets.TENANT_ID }}
   Linuxversion: "PHP|8.2"
