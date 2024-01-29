@@ -1,0 +1,77 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+     
+        "configPropertiesRemoteDebuggingVersion": {
+            "value": "VS2019"
+        },
+        "sitesSubscriptionId": {
+            "value": "subph"
+        },
+        "sitesKind": {
+            "value": "app,linux"
+        },
+        "configPropertiesScmType": {
+            "value": "ExternalGit"
+        },
+        "sitesIdentityType": {
+            "value": "SystemAssigned"
+        },
+        "environment": {
+            "value": "dr"
+        },
+        "environmentlist": {
+            "value": {
+                "Services": "svc",
+                "Prod": "prd",
+                "DEV": "dev",
+                "UAT": "uat",
+                "Test": "tst",
+                "DR": "dr"
+            }
+        },
+        "locationlist": {
+            "value": {
+                "westeurope": "weu",
+                "northeurope": "neu",
+                "westus3": "wus3",
+                "westus": "wus",
+                "southeastasia": "sea",
+                "eastus": "eus"
+            }
+        },
+    
+        "adminUsername": {
+            "value": "pctadmin"
+        },
+        "administratorLoginPassword": {
+            "value": "tstP@ssw0rd1234"
+        },
+
+        "appInstanceName": {
+            "value": "pctestappkpg1"
+        },
+
+    
+        "Linuxversion": {
+            "value": "LXVplaeceholder"
+        },
+   
+        "DeployStorage": {
+            "value": "no"
+        },
+        "PrivateDnsId": {
+            "value": "/subscriptions/subph/resourceGroups/rgph/providers/Microsoft.Network/privateDnsZones/privatelink.vaultcore.azure.net"
+        },
+        "existingSubnetAddressPrefix": {
+            "value": "10.32.1.0/24"
+        },
+        "tenantId": {
+            "value": "tenantph"
+        },
+        "userID": {
+            "value": "useridph"
+        }
+    }
+}

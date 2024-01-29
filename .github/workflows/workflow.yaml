@@ -1,0 +1,145 @@
+name: deploy-web'  #DEefines the name of teh wrkflow
+concurrency: webappt3
+ 
+on:  #This a reserved keyoword for trigger
+  workflow_dispatch: # indiates it will be triggered manually. This is an event for On trigger
+
+   
+  push:  #triggered when a push is made to the repo. This is an event for On trigger
+    branches: [main] # when a push is made to main branch
+    
+
+permissions:
+  id-token: write
+  contents: read
+env:
+  Location: "westus"
+  environment: "dev"
+  REGION: "westus"
+  #$subscription: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  appInstanceName: "webappt3pc"
+  orgPrefix: "pct"
+  tenant:  ${{ secrets.TENANT_ID }}
+  Linuxversion: "PHP|8.2"
+  lawResourceGroup: "RG-PC-ACR-DEV"
+ # $lawSubscription: $subscription
+  DeployStorage : "yes"
+  dbdeployType    : "mysql"
+
+
+    
+
+jobs: #it defines the action that needs to perfored after trigger
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Run Bicep linter
+      run: az bicep build --file ./deploy/main.bicep
+#validate
+  validate:
+    runs-on: ubuntu-Latest # it will spiin rnmmer containerized MS agent
+    
+    
+    steps:
+  # - name: "What" #optional name
+    - name: Print Variables
+      run: echo "Hello $Location. $environment. Using Java Version $tenant"
+ 
+    - uses: actions/checkout@v3
+
+    - uses: azure/login@v1
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        user-id: ${{ secrets.USER_ID }}
+
+    - name: Debug Info
+      run: |
+        echo "AZURE_CLIENT_ID: $AZURE_CLIENT_ID"
+        echo "AZURE_TENANT_ID: $AZURE_TENANT_ID"
+        echo "AZURE_SUBSCRIPTION_ID: $AZURE_SUBSCRIPTION_ID"
+
+      
+    - uses: azure/arm-deploy@v1
+      name: Run preflight validation
+      with:
+
+        scope: subscription
+        subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
+        template: ./deploy/main.bicep
+        parameters: './deploy/param.json environment=${{ env.environment }}  Location=${{ env.Location }}  subscription=${{ secrets.AZURE_SUBSCRIPTION_ID }} appInstanceName=${{ env.appInstanceName }} orgPrefix=${{ env.orgPrefix }} Linuxversion=${{ env.Linuxversion }}  DeployStorage=${{ env.DeployStorage }} dbdeployType=${{ env.dbdeployType }} tenantId=${{ secrets.AZURE_TENANT_ID }} lawResourceGroup=${{ env.lawResourceGroup }} userID=${{ secrets.USER_ID }}'
+        region: 'westus'
+        deploymentMode: Validate
+# Preview changes
+ #bicep-whatif: # name of the job
+  #name: "What-If"  #optional 
+  Preview:
+    runs-on: ubuntu-latest
+    #environment: MyAzureEnvironment
+    needs: [lint, validate]
+   
+    steps:
+    - uses: actions/checkout@v3
+    - uses: azure/login@v1
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        user-id: ${{ secrets.USER_ID }}
+    
+    - uses: azure/arm-deploy@v1
+      name: Run what-if
+      with:
+        scope: subscription
+        subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        deploymentName: 'deployment-${{ github.run_number }}'
+        template: ./deploy/main.bicep
+        parameters: './deploy/param.json environment=${{ env.environment }}  Location=${{ env.Location }}  subscription=${{ secrets.AZURE_SUBSCRIPTION_ID }} appInstanceName=${{ env.appInstanceName }} orgPrefix=${{ env.orgPrefix }} Linuxversion=${{ env.Linuxversion }}  DeployStorage=${{ env.DeployStorage }} dbdeployType=${{ env.dbdeployType }} tenantId=${{ secrets.AZURE_TENANT_ID }} lawResourceGroup=${{ env.lawResourceGroup }} userID=${{ secrets.USER_ID }}' 
+        failOnStdErr: false 
+        additionalArguments: --what-if
+        region: 'westus'
+   
+  deploy:
+  
+    runs-on: ubuntu-latest
+    #environment: MyAzureEnvironment
+    needs: [Preview]
+    outputs:
+      webAppName: ${{ steps.deploy.outputs.webAppName }}
+    steps:
+    - uses: actions/checkout@v3
+    - uses: azure/login@v1
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        user-id: ${{ secrets.USER_ID }}
+    
+    - uses: azure/arm-deploy@v1
+      id: deploy
+      name: Deploy website
+      with:
+        scope: subscription
+        subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        deploymentName: 'deployment-${{ github.run_number }}'
+        template: ./deploy/main.bicep
+        parameters: './deploy/param.json environment=${{ env.environment }}  Location=${{ env.Location }}  subscription=${{ secrets.AZURE_SUBSCRIPTION_ID }} appInstanceName=${{ env.appInstanceName }} orgPrefix=${{ env.orgPrefix }} Linuxversion=${{ env.Linuxversion }}  DeployStorage=${{ env.DeployStorage }} dbdeployType=${{ env.dbdeployType }} tenantId=${{ secrets.AZURE_TENANT_ID }} lawResourceGroup=${{ env.lawResourceGroup }} userID=${{ secrets.USER_ID }}' 
+        failOnStdErr: false 
+        region: 'westus'
+
+  smoke-test:
+      runs-on: ubuntu-latest
+      needs: deploy
+      steps:
+      - uses: actions/checkout@v3
+      - run: |
+          $container = New-PesterContainer `
+            -Path 'deploy/Website.Tests.ps1' `
+            -Data @{ HostName = '${{needs.deploy.outputs.webAppName}}' }
+          Invoke-Pester `
+            -Container $container `
+            -CI
+        name: Run smoke tests
+        shell: pwsh
