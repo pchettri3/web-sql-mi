@@ -24,7 +24,7 @@ env:
   lawResourceGroup: "RG-PC-ACR-DEV"
  # $lawSubscription: $subscription
   DeployStorage : "yes"
-
+  EXISTINGSUBNETADDRESSPREFIX: "192.168.1.0/24"
 
 
     
