@@ -43,5 +43,7 @@ Route table names for SQL MI include:
 - 'Microsoft.Sql-managedInstances_UseOnly_mi-AzureActiveDirectory'
 - 'Microsoft.Sql-managedInstances_UseOnly_subnet-${nsgSuffix}-to-vnetlocal'
 
+## Web module
+For Web module creates ASP and deployes web module. There are few naming orchestration to replace and genereate ASP and web module by replaing new resource group name. It could be created with better orchestration for all resources once I moved naming convention to a separate module. Since, this is complete endtoend deployment for web, db and all dependencies location inside the same RG. I found usage of RG as source naming efficient and easier. However, there are existing network and PE resources which are using different RG and naming there for orchestrated accordingly to refer exisiting resources.
 
 ![Alt text](image.png)
