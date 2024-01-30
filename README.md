@@ -47,3 +47,29 @@ Route table names for SQL MI include:
 For Web module creates ASP and deployes web module. There are few naming orchestration to replace and genereate ASP and web module by replaing new resource group name. It could be created with better orchestration for all resources once I moved naming convention to a separate module. Since, this is complete endtoend deployment for web, db and all dependencies location inside the same RG. I found usage of RG as source naming efficient and easier. However, there are existing network and PE resources which are using different RG and naming there for orchestrated accordingly to refer exisiting resources.
 
 ![Alt text](image.png)
+
+## GitHub Action Flow
+In my GitHub Actions and pipeline job setup, I'm using Open ID connect credentials for passwordless federated access. These credentials grant contributor rights to the subscription for this specific GitHub organization and the main branch repository. To ensure security, I pass the Subscription name, TenantID, and Client ID as secrets, avoiding any exposure of this information in the code, deployment outputs, or public Git URL access.
+
+Less sensitive information is passed as environment variables within the code, making it easy to change them from the GUI, especially for users who deploy the code but are not its authors.
+
+I've organized my workflow into three main jobs:
+
+Linting and Validation Jobs: These jobs run in parallel to assess the code's integrity.
+
+Preview or What If Jobs: These jobs execute after the linting and validation jobs have completed successfully.
+
+Deploy Jobs: These jobs rely on the output from the preview job to initiate the deployment of Azure resources.
+
+Additionally, there is a "Smoke Test Job" that depends on the deployment job to finish before conducting tests on the web app.
+
+Each of these jobs involves preflight validation, what-if analysis, and deployment steps, which typically include checking out the code, installing dependencies, and deploying the code.
+
+GitHub Actions workflows consist of one or more jobs, and each job contains one or more steps. You can have multiple workflows, multiple jobs per workflow, and multiple steps per job. Triggers and events can be configured to automatically initiate workflows, or they can be triggered manually or based on code pushes.
+
+Each job defines a runner, which is the execution environment for the job. Multiple jobs can run in parallel, but you can control their execution order using "needs" or conditional job dependencies.
+
+The actual work within each step can involve running shell scripts or using predefined actions (scripts designed to perform specific tasks).
+
+Code repository link -
+pchettri3/web-sql-mi: none ASE web app with SQL MI (github.com)

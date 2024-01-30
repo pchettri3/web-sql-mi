@@ -32,8 +32,8 @@ param existingSubnetAddressPrefix string
 //var aseResourceName = replace(sitesResourceGroup, '-rg', '')
 //var aspResourceName = replace(sitesResourceGroup, 'rg', aspSuffix)
 
-var vnetsuffix = contains(networkResourceGroup, 'prd') ? 'ase-vnet' : 'vnet'
-var pesubnetsuffix = contains(networkResourceGroup, 'prd') ? 'np-eps-sn' : contains(networkResourceGroup, 'wus3-npr' ) || contains(networkResourceGroup, 'sea-npr' )   ? 'np-eps-sn' :'np-eps-sn'
+var vnetsuffix = contains(networkResourceGroup, 'prd') ? 'app-vnet' : 'vnet'
+var pesubnetsuffix = contains(networkResourceGroup, 'prd') ? 'eps-sn' : contains(networkResourceGroup, 'dev' ) || contains(networkResourceGroup, 'test' )   ? 'np-eps-sn' :'np-eps-sn'
 
 var VnetName = replace(networkResourceGroup, 'ntw-rg', vnetsuffix)
 var dbSubnetName = replace(networkResourceGroup, 'ntw-rg', '${appInstanceName}-${dbsubnetSuffix}-sn')
@@ -284,7 +284,7 @@ module msPrivate './Database/sqlmi.bicep' = {
   If the length of `appInstanceName` is equal to 7, the `appsuffix` variable is set to an empty string.
   Otherwise, the `appsuffix` variable is set to the last character of the `appInstanceName` string.
 */
-var appsuffix = length(appInstanceName) <= 7 ? '' : substring(appInstanceName, length(appInstanceName) - 1, 1)
+var appsuffix = length(appInstanceName) >= 7 ? '' : substring(appInstanceName, length(appInstanceName) - 1, 1)
 var appprefix = take(appInstanceName, 6)
 var appNameFix = '${appprefix}${appsuffix}'
 var keyVaultName = replace(resourceGroupName, 'apps-${sitesName}-rg', '${appNameFix}-kv')

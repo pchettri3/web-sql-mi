@@ -7,11 +7,14 @@ on:  #This a reserved keyoword for trigger
    
   push:  #triggered when a push is made to the repo. This is an event for On trigger
     branches: [main] # when a push is made to main branch
-    
+    paths: #path-ignore to do the opposite
+      - './deploy/**' # when a push is made to readme.md file only start pipeline on deploy
+
 
 permissions:
   id-token: write
   contents: read
+
 env:
   Location: "westus"
   environment: "dev"
@@ -136,7 +139,7 @@ jobs: #it defines the action that needs to perfored after trigger
       - uses: actions/checkout@v3
       - run: |
           $container = New-PesterContainer `
-            -Path 'deploy/Website.Tests.ps1' `
+            -Path './deploy/Website.Tests.ps1' `
             -Data @{ HostName = '${{needs.deploy.outputs.webAppName}}' }
           Invoke-Pester `
             -Container $container `
