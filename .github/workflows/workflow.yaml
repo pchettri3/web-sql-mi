@@ -8,8 +8,7 @@ on:  #This a reserved keyoword for trigger
   push:  #triggered when a push is made to the repo. This is an event for On trigger
     branches: [main] # when a push is made to main branch
     paths: #path-ignore to do the opposite
-      - './deploy/**' # when a push is made to readme.md file only start pipeline on deploy
-
+      - './deploy/**' # when a push is made to readme.md file only start pipeline on deploy !deploy for do not
 
 permissions:
   id-token: write

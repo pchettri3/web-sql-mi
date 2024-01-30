@@ -36,11 +36,6 @@ param configPropertiesScmType string
 //param aspResourceName string
 var webPrivateDNS = replace(PrivateDnsId, 'vaultcore.azure', 'azurewebsites')
 var SubnetID = '${VnetId}/subnets/${privateEndPointSubnetName}'
-//assert webdns = webPrivateDNS == '/subscriptions/d4a23241-7c83-4708-a2ce-c5c15fd80a35/resourceGroups/pct-eus-dev-ntw-rg/providers/Microsoft.Network/privateDnsZones/privatelink.azurewebsites.net'
-/*resource peSubnet 'Microsoft.Network/virtualNetworks/subnets@2021-02-01' existing = {
-  scope: resourceGroup(resourceGroupName)
-  name: '${VnetName}/${PrivateDnsId}'
-}*/
 
 
 resource sitesResource 'Microsoft.Web/sites@2022-03-01' = {
