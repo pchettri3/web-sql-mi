@@ -26,7 +26,7 @@ param existingSubnetAddressPrefix string
 //param sharedPrivateDNSID string
 
 
-//"avt-wus3-prd-ase-rg   'avt-wus3-prd-ase-apps-asp'
+
 //var aspSuffix = contains(sitesResourceGroup, 'wus3-prd') ? 'apps-asp' : contains(sitesResourceGroup, 'wus3-npr-dev') ? 'apps-asp01' : contains(sitesResourceGroup, 'wus3-npr-test') ? 'apps-asp01' : contains(sitesResourceGroup, 'sea-npr-dev') ? 'asp001' : 'apps-asp001'
 
 //var aseResourceName = replace(sitesResourceGroup, '-rg', '')
@@ -127,17 +127,16 @@ Deploys web app in Ase hosting environment
 */
 
     module webAppDeploy './webAppModule/aseWebApp.bicep' = {//[for (ap,i) in appInstanceName : {
-      scope: appResourceGroup // resourceGroup('avt-${locationlist[location]}-${environment}-${ap}-rg')
+      scope: appResourceGroup 
       name: 'Ase-App-${substring(resourceGroupName, 4, length(resourceGroupName) - 8)}-Deploy${appInstanceName}'
      // dependsOn: [
     //    AseHosting
    //   ]
       params: {
         //aspResourceName: aspResourceName
-        sitesName: sitesName //'avt-${locationlist[location]}-${environmentlist[environment]}-${ap}-rg'
+        sitesName: sitesName 
         sitesLocation: sitesLocation
-    //    sitesAseHostingEnvironmentName: AseHosting.name //'avt-${locationlist[location]}-${environment}-ase'
-    //    sitesAseHostingEnvironmentId: AseHosting.id
+
         sitesServerfarmsAspId: aspID
         sitesTags: {}
         sitesKind: sitesKind
